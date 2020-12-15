@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import CharacterGrid from './Components/Characters/CharacterGrid';
+import Header from './Components/Ui/Header';
+import Search from './Components/Ui/Search';
+import './Main.css';
 
 function App() {
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [query, setQuery] = useState('');
+
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      const result = await Axios(`https://www.breakingbadapi.com/api/characters?name=${query}`)
+      setItems(result.data);
+      setIsLoading(false)
+    }
+    fetchItem()
+  }, [query]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <Header />
+      <Search
+        getQuery={(q) => setQuery(q)}
+      />
+      <CharacterGrid
+        isLoading={isLoading}
+        items={items}
+      />
     </div>
   );
 }
